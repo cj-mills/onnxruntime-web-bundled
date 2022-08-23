@@ -2,6 +2,7 @@
 // Licensed under the MIT license.
 // import { getImageTensorFromPath } from './imageHelper';
 const ort = require('onnxruntime-web');
+var session;
 
 // use an async context to call onnxruntime functions.
 async function main() {
@@ -27,7 +28,7 @@ async function main() {
         // the model in this example contains a single MatMul node
         // it has 2 inputs: 'a'(float32, 3x4) and 'b'(float32, 4x3)
         // it has 1 output: 'c'(float32, 3x3)
-        const session = await ort.InferenceSession.create('squeezenet1_1.onnx',
+        session = await ort.InferenceSession.create('squeezenet1_1.onnx',
             { executionProviders: ['wasm'], graphOptimizationLevel: 'all' });
 
         // // prepare inputs. a tensor need its corresponding TypedArray as data
@@ -47,7 +48,7 @@ async function main() {
         // document.write(`data of result tensor 'c': ${dataC}`);
         document.getElementById('output_text').innerHTML = 'Success!';
     } catch (e) {
-        document.write(`failed to inference ONNX model: ${e}.`);
+        document.getElementById('output_text').innerHTML = `failed to inference ONNX model: ${e}.`;
     }
 }
 
