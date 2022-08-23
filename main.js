@@ -38,7 +38,7 @@ async function main() {
         // // read from results
         // const dataC = results.c.data;
         // document.write(`data of result tensor 'c': ${dataC}`);
-        document.write('Success!')
+        document.append('Success!')
 
     } catch (e) {
         document.write(`failed to inference ONNX model: ${e}.`);
