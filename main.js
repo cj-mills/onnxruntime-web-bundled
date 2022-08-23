@@ -6,19 +6,17 @@ const ort = require('onnxruntime-web');
 // use an async context to call onnxruntime functions.
 async function main() {
 
-    var image = new Image();
-    image.src = './images/sailboat.jpg';
+    // var image = new Image();
+    var image_src = './images/sailboat.jpg';
 
-    // 1. Convert image to tensor
-    // const imageTensor = await getImageTensorFromPath(path);
+    var reader = new FileReader();
+    reader.onload = function () {
+        var dataURL = reader.result;
+        var output = document.getElementById('output');
+        output.src = dataURL;
+    };
+    reader.readAsDataURL(image_src);
 
-    // Draw the image on the canvas
-    // const canvas = document.createElement("CANVAS");
-    // const ctx = canvas.getContext('2d');
-    // image.onload = () => {
-    //     ctx.drawImage(image, 0, 0, 224, 224);
-    // }
-    document.body.appendChild(image);
 
     try {
         // window.alert("Hello World!");
