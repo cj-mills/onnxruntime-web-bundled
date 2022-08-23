@@ -23,9 +23,9 @@ async function main() {
             { executionProviders: ['wasm'], graphOptimizationLevel: 'all' });
 
 
-        document.getElementById('output_text').innerHTML += 'Created inference session.';
+        document.getElementById('output_text').innerHTML += '\nCreated inference session.';
     } catch (e) {
-        document.getElementById('output_text').innerHTML += `failed to create inference session: ${e}.`;
+        document.getElementById('output_text').innerHTML += `\nfailed to create inference session: ${e}.`;
     }
 
     try {
@@ -43,7 +43,7 @@ async function main() {
         // const dataC = results.c.data;
         // document.write(`data of result tensor 'c': ${dataC}`);
     } catch (e) {
-        document.getElementById('output_text').innerHTML += `failed to perform inference: ${e}.`;
+        document.getElementById('output_text').innerHTML += `\nfailed to perform inference: ${e}.`;
     }
 }
 
