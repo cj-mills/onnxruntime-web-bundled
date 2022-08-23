@@ -34,7 +34,7 @@ async function main() {
     var exec_provider = 'wasm';
     var return_msg = init_session(model_path, exec_provider);
 
-    document.getElementById('output_text').innerHTML += `<br>${return_msg}`;
+    document.getElementById('output_text').innerHTML += `<br>${(await return_msg).toString()}`;
 
     if (session = ! null) {
         try {
