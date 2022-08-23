@@ -10,8 +10,12 @@ async function main() {
     var image_src = './images/sailboat.jpg';
 
     var image = document.getElementById('image');
-    document.write(`Image Name: ${image.src}`);
 
+    var div = document.createElement('div');
+    div.id = 'image_text';
+    div.innerHTML = `Image Name: ${image.src}`;
+
+    document.getElementById('output').innerHTML = ad_content;
 
     try {
         // window.alert("Hello World!");
@@ -38,7 +42,9 @@ async function main() {
         // // read from results
         // const dataC = results.c.data;
         // document.write(`data of result tensor 'c': ${dataC}`);
-        document.append('Success!')
+        var out_div = document.createElement('out_div');
+        out_div.id = 'output_text';
+        document.getElementById('output_text').innerHTML = 'Success!';
 
     } catch (e) {
         document.write(`failed to inference ONNX model: ${e}.`);
