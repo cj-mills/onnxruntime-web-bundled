@@ -1,6 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
-import { getImageTensorFromPath } from './imageHelper';
+// import { getImageTensorFromPath } from './imageHelper';
 const ort = require('onnxruntime-web');
 
 // use an async context to call onnxruntime functions.
