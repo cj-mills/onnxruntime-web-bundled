@@ -41,10 +41,10 @@ async function main() {
         // // read from results
         // const dataC = results.c.data;
         // document.write(`data of result tensor 'c': ${dataC}`);
-        var out_div = document.createElement("DIV");
-        out_div.id = 'output_text';
-        document.getElementById('output_text').innerHTML = 'Success!';
-        document.body.appendChild(out_div);
+        // var out_div = document.createElement("DIV");
+        // out_div.id = 'output_text';
+        // document.getElementById('output_text').innerHTML = 'Success!';
+        // document.body.appendChild(out_div);
     } catch (e) {
         document.write(`failed to inference ONNX model: ${e}.`);
     }
