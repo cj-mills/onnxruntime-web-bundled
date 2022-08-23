@@ -9,8 +9,8 @@ async function main() {
     // var image = new Image();
     var image_src = './images/sailboat.jpg';
 
-    var output = document.getElementById('output');
-    output.src = URL.createObjectURL(image_src);
+    var image = document.getElementById('image');
+    document.write(`Image Name: ${image.src}`);
 
 
     try {
