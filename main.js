@@ -9,13 +9,8 @@ async function main() {
     // var image = new Image();
     var image_src = './images/sailboat.jpg';
 
-    var reader = new FileReader();
-    reader.onload = function () {
-        var dataURL = reader.result;
-        var output = document.getElementById('output');
-        output.src = dataURL;
-    };
-    reader.readAsDataURL(image_src);
+    var output = document.getElementById('output');
+    output.src = URL.createObjectURL(image_src);
 
 
     try {
