@@ -15,8 +15,6 @@ async function main() {
     div.id = 'image_text';
     div.innerHTML = `Image Name: ${image.src}`;
 
-    document.getElementById('output').innerHTML = ad_content;
-
     try {
         // window.alert("Hello World!");
         // create a new session and load the specific model.
