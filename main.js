@@ -11,7 +11,7 @@ async function main() {
     image.src = './images/sailboat.jpg';
 
     // 1. Convert image to tensor
-    const imageTensor = await getImageTensorFromPath(path);
+    // const imageTensor = await getImageTensorFromPath(path);
 
     // Draw the image on the canvas
     const canvas = canvasRef.current;
