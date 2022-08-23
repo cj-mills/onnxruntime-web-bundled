@@ -4,6 +4,20 @@
 const ort = require('onnxruntime-web');
 var session;
 
+async function init_session(model_path, exec_provider) {
+    var return_msg;
+    try {
+        // create a new session and load the specified model.
+        session = await ort.InferenceSession.create(model_path,
+            { executionProviders: [exec_provider], graphOptimizationLevel: 'all' });
+        return_msg = 'Created inference session.';
+    } catch (e) {
+        return_msg = `failed to create inference session: ${e}.`;
+    }
+    return return_msg;
+}
+
+
 // use an async context to call onnxruntime functions.
 async function main() {
 
@@ -16,17 +30,11 @@ async function main() {
     div.id = 'output_text';
     div.innerHTML = `Image Source: ${image.src}`;
     document.body.appendChild(div);
+    var model_path = 'squeezenet1_1.onnx';
+    var exec_provider = 'wasm';
+    var return_msg = init_session(model_path, exec_provider);
 
-    try {
-        // create a new session and load the specified model.
-        session = await ort.InferenceSession.create('squeezenet1_1.onnx',
-            { executionProviders: ['wasm'], graphOptimizationLevel: 'all' });
-
-
-        document.getElementById('output_text').innerHTML += '<br>Created inference session.';
-    } catch (e) {
-        document.getElementById('output_text').innerHTML += `<br>failed to create inference session: ${e}.`;
-    }
+    document.getElementById('output_text').innerHTML += `<br>${return_msg}`;
 
     if (session = ! null) {
         try {
