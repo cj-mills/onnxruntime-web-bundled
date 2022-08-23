@@ -23,28 +23,31 @@ async function main() {
             { executionProviders: ['wasm'], graphOptimizationLevel: 'all' });
 
 
-        document.getElementById('output_text').innerHTML += '\nCreated inference session.';
+        document.getElementById('output_text').innerHTML += '<br>Created inference session.';
     } catch (e) {
-        document.getElementById('output_text').innerHTML += `\nfailed to create inference session: ${e}.`;
+        document.getElementById('output_text').innerHTML += `<br>failed to create inference session: ${e}.`;
     }
 
-    try {
-        // prepare inputs. a tensor need its corresponding TypedArray as data
-        // const dataA = Float32Array.from([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
-        // const input_tensor = new ort.Tensor('float32', dataA, [3, 4]);
+    if (session = ! null) {
+        try {
+            // prepare inputs. a tensor need its corresponding TypedArray as data
+            // const dataA = Float32Array.from([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+            // const input_tensor = new ort.Tensor('float32', dataA, [3, 4]);
 
-        // prepare feeds. use model input names as keys.
-        // const feeds = { a: tensorA, b: tensorB };
+            // prepare feeds. use model input names as keys.
+            // const feeds = { a: tensorA, b: tensorB };
 
-        // feed inputs and run
-        // const results = await session.run(feeds);
+            // feed inputs and run
+            // const results = await session.run(feeds);
 
-        // read from results
-        // const dataC = results.c.data;
-        // document.write(`data of result tensor 'c': ${dataC}`);
-    } catch (e) {
-        document.getElementById('output_text').innerHTML += `\nfailed to perform inference: ${e}.`;
+            // read from results
+            // const dataC = results.c.data;
+            // document.write(`data of result tensor 'c': ${dataC}`);
+        } catch (e) {
+            document.getElementById('output_text').innerHTML += `<br>failed to perform inference: ${e}.`;
+        }
     }
+
 }
 
 main();
