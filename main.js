@@ -13,11 +13,12 @@ async function main() {
     // const imageTensor = await getImageTensorFromPath(path);
 
     // Draw the image on the canvas
-    const canvas = document.createElement("CANVAS");
-    const ctx = canvas.getContext('2d');
-    image.onload = () => {
-        ctx.drawImage(image, 0, 0, 224, 224);
-    }
+    // const canvas = document.createElement("CANVAS");
+    // const ctx = canvas.getContext('2d');
+    // image.onload = () => {
+    //     ctx.drawImage(image, 0, 0, 224, 224);
+    // }
+    document.body.appendChild(image);
 
     try {
         // window.alert("Hello World!");
