@@ -1,10 +1,25 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
-
+import { getImageTensorFromPath } from './imageHelper';
 const ort = require('onnxruntime-web');
 
 // use an async context to call onnxruntime functions.
 async function main() {
+
+    const canvasRef = useRef < HTMLCanvasElement > (null);
+    var image = new Image();
+    image.src = './images/sailboat.jpg';
+
+    // 1. Convert image to tensor
+    const imageTensor = await getImageTensorFromPath(path);
+
+    // Draw the image on the canvas
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    image.onload = () => {
+        ctx.drawImage(image, 0, 0, 224, 224);
+    }
+
     try {
         // window.alert("Hello World!");
         // create a new session and load the specific model.
