@@ -69,16 +69,22 @@ async function main() {
     var n_channels = 3;
     const float32Data = new Float32Array(3 * image.height * image.width);
 
+    // for (p = 0; p < n_pixels; p++) {
+    //     float32Data[0 * n_pixels + p] = ((imageBufferData[p * n_channels + 0] / 255.0) - mean[0]) / std_dev[0];
+    //     float32Data[1 * n_pixels + p] = ((imageBufferData[p * n_channels + 1] / 255.0) - mean[1]) / std_dev[1];
+    //     float32Data[2 * n_pixels + p] = ((imageBufferData[p * n_channels + 2] / 255.0) - mean[2]) / std_dev[2];
+    // }
+
     for (p = 0; p < n_pixels; p++) {
-        float32Data[0 * n_pixels + p] = ((imageBufferData[p * n_channels + 0] / 255.0) - mean[0]) / std_dev[0];
-        float32Data[1 * n_pixels + p] = ((imageBufferData[p * n_channels + 1] / 255.0) - mean[1]) / std_dev[1];
-        float32Data[2 * n_pixels + p] = ((imageBufferData[p * n_channels + 2] / 255.0) - mean[2]) / std_dev[2];
+        float32Data[0 * n_pixels + p] = ((imageBufferData[p * n_channels + 0]) - mean[0]) / std_dev[0];
+        float32Data[1 * n_pixels + p] = ((imageBufferData[p * n_channels + 1]) - mean[1]) / std_dev[1];
+        float32Data[2 * n_pixels + p] = ((imageBufferData[p * n_channels + 2]) - mean[2]) / std_dev[2];
     }
 
     // 5. create the tensor object from onnxruntime-web.
     const input_tensor = new ort.Tensor("float32", float32Data, [1, 3, image.height, image.width]);
     const feeds = {};
-    feeds['input'] = input_tensor;
+    feeds[session.inputNames[0]] = input_tensor;
 
 
     // feed inputs and run
