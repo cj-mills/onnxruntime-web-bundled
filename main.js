@@ -20,8 +20,12 @@ async function init_session(model_path, exec_provider) {
 }
 
 function argMax(array) {
-    return [].map.call(array, (x, i) => [x, i]).reduce((r, a) => (a[0] > r[0] ? a : r))[1];
+    return array.map((x, i) => [x, i]).reduce((r, a) => (a[0] > r[0] ? a : r))[1];
 }
+
+// function argMax(array) {
+//     return [].map.call(array, (x, i) => [x, i]).reduce((r, a) => (a[0] > r[0] ? a : r))[1];
+// }
 
 // use an async context to call onnxruntime functions.
 async function main() {
@@ -33,9 +37,9 @@ async function main() {
     document.body.appendChild(div);
 
     var model_dir = './models';
-    var model_path = `${model_dir}/squeezenet1_1.onnx`;
     // var model_path = `${model_dir}/squeezenet1_1.onnx`;
-    // var model_path = `${model_dir}/squeezenet1_1.onnx`;
+    var model_path = `${model_dir}/resnet50v2.onnx`;
+    // var model_path = `${model_dir}/mobilenetv2-7.onnx`;
     var exec_provider = 'wasm';
     var return_msg = await init_session(model_path, exec_provider);
     console.log(`Input Name: ${session.inputNames[0]}`);
