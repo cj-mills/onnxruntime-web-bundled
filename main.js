@@ -41,7 +41,7 @@ async function main() {
         canvas.width = image.width;
         canvas.height = image.height;
 
-        var imageData = context.getImageData(0, 0, img.width, img.height);
+        var imageData = context.getImageData(0, 0, image.width, image.height);
 
         // 1. Get buffer data from image and create R, G, and B arrays.
         var imageBufferData = imageData.data;
@@ -79,10 +79,6 @@ async function main() {
             document.getElementById('output_text').innerHTML += `<br>failed to perform inference: ${e}.`;
         }
     }
-    else {
-        document.write('session is null');
-    }
-
 }
 
 main();
