@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 // import { getImageTensorFromPath } from './imageHelper';
+// import * as Jimp from 'jimp';
 const ort = require('onnxruntime-web');
 var session;
 
@@ -21,15 +22,12 @@ async function init_session(model_path, exec_provider) {
 // use an async context to call onnxruntime functions.
 async function main() {
 
-    // var image = new Image();
-    var image_src = './images/sailboat.jpg';
-
     var image = document.getElementById('image');
-
     var div = document.createElement("DIV");
     div.id = 'output_text';
     div.innerHTML = `Image Source: ${image.src}`;
     document.body.appendChild(div);
+
     var model_path = 'squeezenet1_1.onnx';
     var exec_provider = 'wasm';
     var return_msg = init_session(model_path, exec_provider);
@@ -37,20 +35,46 @@ async function main() {
     document.getElementById('output_text').innerHTML += `<br>${(await return_msg).toString()}`;
 
     if (session = ! null) {
+
+        var canvas = document.createElement('canvas');
+        var context = canvas.getContext('2d');
+        canvas.width = image.width;
+        canvas.height = image.height;
+
+        var imageData = context.getImageData(0, 0, img.width, img.height);
+
+        // 1. Get buffer data from image and create R, G, and B arrays.
+        var imageBufferData = imageData.data;
+        const [redArray, greenArray, blueArray] = new Array(new Array(), new Array(), new Array());
+
+        // 2. Loop through the image buffer and extract the R, G, and B channels
+        for (let i = 0; i < imageBufferData.length; i += 4) {
+            redArray.push(imageBufferData[i]);
+            greenArray.push(imageBufferData[i + 1]);
+            blueArray.push(imageBufferData[i + 2]);
+            // skip data[i + 3] to filter out the alpha channel
+        }
+
+        // 3. Concatenate RGB to transpose [224, 224, 3] -> [3, 224, 224] to a number array
+        const transposedData = redArray.concat(greenArray).concat(blueArray);
+
+        // create the Float32Array size 3 * 224 * 224 for these dimensions output
+        const float32Data = new Float32Array(dims[1] * dims[2] * dims[3]);
+        for (i = 0; i < l; i++) {
+            float32Data[i] = transposedData[i] / 255.0; // convert to float
+        }
+        // 5. create the tensor object from onnxruntime-web.
+        const input_tensor = new Tensor("float32", float32Data, dims);
+        const feeds = Record();
+        feeds[session.inputNames[0]] = input_tensor;
+
         try {
-            // prepare inputs. a tensor need its corresponding TypedArray as data
-            // const dataA = Float32Array.from([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
-            // const input_tensor = new ort.Tensor('float32', dataA, [3, 4]);
-
-            // prepare feeds. use model input names as keys.
-            // const feeds = { a: tensorA, b: tensorB };
-
             // feed inputs and run
-            // const results = await session.run(feeds);
+            const results = await session.run(feeds);
 
             // read from results
-            // const dataC = results.c.data;
-            // document.write(`data of result tensor 'c': ${dataC}`);
+            const dataC = results.c.data;
+            document.write(`data of result tensor 'c': ${dataC}`);
         } catch (e) {
             document.getElementById('output_text').innerHTML += `<br>failed to perform inference: ${e}.`;
         }
