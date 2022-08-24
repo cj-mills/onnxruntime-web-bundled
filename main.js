@@ -79,6 +79,7 @@ async function main() {
     // }
 
     var n_pixels = image.width * image.height;
+    var n_channels = 3;
     const float32Data = new Float32Array(3 * image.height * image.width);
 
     for (p = 0; p < n_pixels; p++) {
