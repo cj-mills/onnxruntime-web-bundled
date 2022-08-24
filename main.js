@@ -35,7 +35,7 @@ async function main() {
     var model_path = 'squeezenet1_1.onnx';
     var exec_provider = 'wasm';
     var return_msg = await init_session(model_path, exec_provider);
-    alert(`Input Name: ${session.inputNames[0]}`);
+    console.log(`Input Name: ${session.inputNames[0]}`);
 
     document.getElementById('output_text').innerHTML += `<br>${(await return_msg).toString()}`;
 
@@ -81,7 +81,7 @@ async function main() {
     const output = outputData[session.outputNames[0]];
     var results = Array.prototype.slice.call(output.data);
     var index = argMax(results);
-    document.getElementById('output_text').innerHTML += `Predicted class index: ${index}`;
+    document.getElementById('output_text').innerHTML += `<br>Predicted class index: ${index}`;
 }
 
 main();
