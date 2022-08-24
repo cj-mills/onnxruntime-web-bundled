@@ -27,6 +27,18 @@ function argMax(array) {
 //     return [].map.call(array, (x, i) => [x, i]).reduce((r, a) => (a[0] > r[0] ? a : r))[1];
 // }
 
+//The softmax transforms values to be between 0 and 1
+function softmax(resultArray) {
+    // Get the largest value in the array.
+    const largestNumber = Math.max(...resultArray);
+    // Apply exponential function to each result item subtracted by the largest number, use reduce to get the previous result number and the current number to sum all the exponentials results.
+    const sumOfExp = resultArray.map((resultItem) => Math.exp(resultItem - largestNumber)).reduce((prevNumber, currentNumber) => prevNumber + currentNumber);
+    //Normalizes the resultArray by dividing by the sum of all exponentials; this normalization ensures that the sum of the components of the output vector is 1.
+    return resultArray.map((resultValue, index) => {
+        return Math.exp(resultValue - largestNumber) / sumOfExp;
+    });
+}
+
 // use an async context to call onnxruntime functions.
 async function main() {
 
@@ -37,8 +49,8 @@ async function main() {
     document.body.appendChild(div);
 
     var model_dir = './models';
-    // var model_path = `${model_dir}/squeezenet1_1.onnx`;
-    var model_path = `${model_dir}/resnet50v2.onnx`;
+    var model_path = `${model_dir}/squeezenet1_1.onnx`;
+    // var model_path = `${model_dir}/resnet50v2.onnx`;
     // var model_path = `${model_dir}/mobilenetv2-7.onnx`;
     var exec_provider = 'wasm';
     var return_msg = await init_session(model_path, exec_provider);
@@ -86,7 +98,8 @@ async function main() {
 
     // read from results
     const output = outputData[session.outputNames[0]];
-    var results = Array.prototype.slice.call(output.data);
+    var results = softmax(Array.prototype.slice.call(output.data));
+
     var index = argMax(results);
     document.getElementById('output_text').innerHTML += `<br>Predicted class index: ${index}`;
 }
