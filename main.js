@@ -75,7 +75,7 @@ async function main() {
         const results = await session.run(feeds);
 
         // read from results
-        const dataC = results.c.data;
+        const dataC = results.data;
         document.write(`data of result tensor 'c': ${dataC}`);
     } catch (e) {
         document.getElementById('output_text').innerHTML += `<br>failed to perform inference: ${e}.`;
