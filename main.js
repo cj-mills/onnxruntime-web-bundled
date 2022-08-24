@@ -75,7 +75,7 @@ async function main() {
 
         try {
             // feed inputs and run
-            const results = await globalThis.session.run(feeds);
+            const results = await session.run(feeds);
 
             // read from results
             const dataC = results.c.data;
