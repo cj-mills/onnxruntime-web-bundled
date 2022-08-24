@@ -79,6 +79,9 @@ async function main() {
             document.getElementById('output_text').innerHTML += `<br>failed to perform inference: ${e}.`;
         }
     }
+    else {
+        document.write('session is null');
+    }
 
 }
 
