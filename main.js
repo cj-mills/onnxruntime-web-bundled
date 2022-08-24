@@ -58,6 +58,7 @@ async function main() {
         // 3. Concatenate RGB to transpose [224, 224, 3] -> [3, 224, 224] to a number array
         const transposedData = redArray.concat(greenArray).concat(blueArray);
 
+        let i, l = transposedData.length;
         // create the Float32Array size 3 * 224 * 224 for these dimensions output
         const float32Data = new Float32Array(3 * image.height * image.width);
         for (i = 0; i < l; i++) {
