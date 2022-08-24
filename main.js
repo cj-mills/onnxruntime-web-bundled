@@ -82,9 +82,9 @@ async function main() {
     const float32Data = new Float32Array(3 * image.height * image.width);
 
     for (p = 0; p < n_pixels; p++) {
-        float32Data[0 * n_pixels + p] = transposedData[p * n_channels + 0] / 255.0;
-        float32Data[1 * n_pixels + p] = transposedData[p * n_channels + 1] / 255.0;
-        float32Data[2 * n_pixels + p] = transposedData[p * n_channels + 2] / 255.0;
+        float32Data[0 * n_pixels + p] = imageBufferData[p * n_channels + 0] / 255.0;
+        float32Data[1 * n_pixels + p] = imageBufferData[p * n_channels + 1] / 255.0;
+        float32Data[2 * n_pixels + p] = imageBufferData[p * n_channels + 2] / 255.0;
     }
 
     // 3. Concatenate RGB to transpose [224, 224, 3] -> [3, 224, 224] to a number array
