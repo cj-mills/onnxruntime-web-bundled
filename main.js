@@ -3,13 +3,19 @@
 // import { getImageTensorFromPath } from './imageHelper';
 // import * as Jimp from 'jimp';
 const ort = require('onnxruntime-web');
-var session;
+// var session;
 
 async function init_session(model_path, exec_provider) {
-    // create a new session and load the specified model.
-    const session_const = await ort.InferenceSession.create(model_path,
-        { executionProviders: [exec_provider], graphOptimizationLevel: 'all' });
-    return session_const;
+    var return_msg;
+    try {
+        // create a new session and load the specified model.
+        globalThis.session = await ort.InferenceSession.create(model_path,
+            { executionProviders: [exec_provider], graphOptimizationLevel: 'all' });
+        return_msg = 'Created inference session.';
+    } catch (e) {
+        return_msg = `failed to create inference session: ${e}.`;
+    }
+    return return_msg;
 }
 
 
@@ -24,13 +30,13 @@ async function main() {
 
     var model_path = 'squeezenet1_1.onnx';
     var exec_provider = 'wasm';
-    session = init_session(model_path, exec_provider);
+    var return_msg = init_session(model_path, exec_provider);
 
-    // document.getElementById('output_text').innerHTML += `<br>${(await return_msg).toString()}`;
+    document.getElementById('output_text').innerHTML += `<br>${(await return_msg).toString()}`;
 
     console.log(typeof (session));
 
-    if (session = ! null) {
+    if (globalThis.session = ! null) {
 
         var canvas = document.createElement('canvas');
         var context = canvas.getContext('2d');
@@ -67,7 +73,7 @@ async function main() {
 
         try {
             // feed inputs and run
-            const results = await session.run(feeds);
+            const results = await globalThis.session.run(feeds);
 
             // read from results
             const dataC = results.c.data;
