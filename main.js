@@ -66,7 +66,7 @@ async function main() {
 
     // 1. Get buffer data from image.
     var imageBufferData = imageData.data;
-    console.log(imageBufferData[0 * n_channels + 0]);
+    console.log(imageBufferData[0]);
     console.log(`Image Data: ${imageBufferData}`);
 
 
