@@ -56,16 +56,19 @@ async function main() {
 
     document.getElementById('output_text').innerHTML += `<br>${(await return_msg).toString()}`;
 
-    image = new Image();
+    image = await new Image();
     image.src = 'https://cj-mills.github.io/onnxruntime-web-bundled/images/Play_1291.jpg';
     div.innerHTML = `Image Source: ${image.src}`;
 
     var canvas = document.createElement("CANVAS");
     var context = canvas.getContext('2d');
     document.body.appendChild(canvas);
-    canvas.width = image.width;
-    canvas.height = image.height;
-    context.drawImage(image, 0, 0);
+    image.onload = () => {
+        canvas.width = image.width;
+        canvas.height = image.height;
+        context.drawImage(image, 0, 0);
+    }
+
     var imageData = context.getImageData(0, 0, image.width, image.height);
 
     // 1. Get buffer data from image.
