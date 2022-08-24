@@ -34,6 +34,8 @@ async function main() {
 
     document.getElementById('output_text').innerHTML += `<br>${(await return_msg).toString()}`;
 
+    console.log(typeof (session));
+
     if (session = ! null) {
 
         var canvas = document.createElement('canvas');
