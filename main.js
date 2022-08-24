@@ -75,10 +75,10 @@ async function main() {
     var n_channels = 3;
     const float32Data = new Float32Array(3 * image.height * image.width);
 
-    const delta = 4;
-    const length = imageBufferData.length;
-    const newLength = length - length / delta;
-    console.time('first');
+    // const delta = 4;
+    // const length = imageBufferData.length;
+    // const newLength = length - length / delta;
+    // console.time('first');
     // const rgbArr = new Uint8Array(newLength);
     // let j = 0;
     // for (i = 0; i < length; i = i + delta) {
@@ -100,8 +100,8 @@ async function main() {
     //     float32Data[1 * n_pixels + p] = ((rgbArr[p * n_channels + 1] / 255.0) - mean[1]) / std_dev[1];
     //     float32Data[2 * n_pixels + p] = ((rgbArr[p * n_channels + 2] / 255.0) - mean[2]) / std_dev[2];
     // }
-    console.timeEnd('first');
-    console.log(`${float32Data}`);
+    // console.timeEnd('first');
+    // console.log(`${float32Data}`);
 
     console.time('second');
     const [redArray, greenArray, blueArray] = new Array(new Array(), new Array(), new Array());
@@ -112,17 +112,20 @@ async function main() {
         greenArray.push(imageBufferData[i + 1]);
         blueArray.push(imageBufferData[i + 2]);
         // skip data[i + 3] to filter out the alpha channel
+        float32Data[0 + i] = ((redArray[i] / 255.0) - mean[0]) / std_dev[0];
+        float32Data[1 + i] = ((greenArray[i] / 255.0) - mean[1]) / std_dev[1];
+        float32Data[2 + i] = ((blueArray[i] / 255.0) - mean[2]) / std_dev[2];
     }
 
     // 3. Concatenate RGB to transpose [224, 224, 3] -> [3, 224, 224] to a number array
     const transposedData = redArray.concat(greenArray).concat(blueArray);
 
     // 4. convert to float32
-    for (let p = 0; p < n_pixels; p++) {
-        float32Data[p + 0] = ((transposedData[p + 0] / 255.0) - mean[0]) / std_dev[0];
-        float32Data[p + 1] = ((transposedData[p + 1] / 255.0) - mean[1]) / std_dev[1];
-        float32Data[p + 2] = ((transposedData[p + 2] / 255.0) - mean[2]) / std_dev[2];
-    }
+    // for (let p = 0; p < n_pixels; p++) {
+    //     float32Data[p + 0] = ((transposedData[p + 0] / 255.0) - mean[0]) / std_dev[0];
+    //     float32Data[p + 1] = ((transposedData[p + 1] / 255.0) - mean[1]) / std_dev[1];
+    //     float32Data[p + 2] = ((transposedData[p + 2] / 255.0) - mean[2]) / std_dev[2];
+    // }
     console.timeEnd('second');
 
     console.log(`Input Data: ${float32Data}`);
