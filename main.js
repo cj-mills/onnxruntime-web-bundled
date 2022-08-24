@@ -78,7 +78,7 @@ async function main() {
         float32Data[1 * n_pixels + p] = ((imageBufferData[p * n_channels + 1] / 255.0) - mean[1]) / std_dev[1];
         float32Data[2 * n_pixels + p] = ((imageBufferData[p * n_channels + 2] / 255.0) - mean[2]) / std_dev[2];
     }
-    console.log(float32Data);
+    console.log(`${float32Data}`);
 
     const [redArray, greenArray, blueArray] = new Array(new Array(), new Array(), new Array());
 
