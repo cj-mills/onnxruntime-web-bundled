@@ -83,16 +83,15 @@ async function main() {
     //     j = j + 3;
     // }
 
-
     var n_pixels = image.width * image.height;
     var n_channels = 3;
     const float32Data = new Float32Array(3 * image.height * image.width);
 
     for (i = 0; i < length; i = i + delta) {
-        float32Data[j + 0 * n_pixels] = imageBufferData[i * n_pixels + 0]; // R
-        float32Data[j + 1 * n_pixels] = imageBufferData[i * n_pixels + 1]; // G
-        float32Data[j + 2 * n_pixels] = imageBufferData[i * n_pixels + 2]; // B
-        j = j + n_channels;
+        float32Data[0 * n_pixels + j] = ((imageBufferData[i * n_channels + 0] / 255.0) - mean[0]) / std_dev[0];
+        float32Data[1 * n_pixels + j] = ((imageBufferData[i * n_channels + 1] / 255.0) - mean[1]) / std_dev[1];
+        float32Data[2 * n_pixels + j] = ((imageBufferData[i * n_channels + 2] / 255.0) - mean[2]) / std_dev[2];
+        j = j + 3;
     }
 
     // for (let p = 0; p < n_pixels; p++) {
