@@ -3,15 +3,16 @@
 // import { getImageTensorFromPath } from './imageHelper';
 // import * as Jimp from 'jimp';
 const ort = require('onnxruntime-web');
-// var session;
+var session;
 
 async function init_session(model_path, exec_provider) {
     var return_msg;
     try {
         // create a new session and load the specified model.
-        globalThis.session = await ort.InferenceSession.create(model_path,
+        session = await ort.InferenceSession.create(model_path,
             { executionProviders: [exec_provider], graphOptimizationLevel: 'all' });
         return_msg = 'Created inference session.';
+        alert(session.inputNames[0]);
     } catch (e) {
         return_msg = `failed to create inference session: ${e}.`;
     }
