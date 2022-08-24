@@ -76,7 +76,7 @@ async function main() {
 
     // read from results
     const output = outputData[session.outputNames[0]];
-    document.getElementById('output_text').innerHTML += `data of result tensor: ${output}`;
+    document.getElementById('output_text').innerHTML += `data of result tensor: ${output[0]}`;
 }
 
 main();
