@@ -3,7 +3,7 @@
 // import { getImageTensorFromPath } from './imageHelper';
 // import * as Jimp from 'jimp';
 const ort = require('onnxruntime-web');
-var session;
+var session = ort.InferenceSession;
 
 async function init_session(model_path, exec_provider) {
     var return_msg;
@@ -36,53 +36,49 @@ async function main() {
 
     document.getElementById('output_text').innerHTML += `<br>${(await return_msg).toString()}`;
 
-    console.log(typeof (session));
+    // console.log(typeof (session));
 
-    if (session = ! null) {
+    var canvas = document.createElement('canvas');
+    var context = canvas.getContext('2d');
+    canvas.width = image.width;
+    canvas.height = image.height;
+    var imageData = context.getImageData(0, 0, image.width, image.height);
 
-        var canvas = document.createElement('canvas');
-        var context = canvas.getContext('2d');
-        canvas.width = image.width;
-        canvas.height = image.height;
+    // 1. Get buffer data from image and create R, G, and B arrays.
+    var imageBufferData = imageData.data;
+    const [redArray, greenArray, blueArray] = new Array(new Array(), new Array(), new Array());
 
-        var imageData = context.getImageData(0, 0, image.width, image.height);
+    // 2. Loop through the image buffer and extract the R, G, and B channels
+    for (let i = 0; i < imageBufferData.length; i += 4) {
+        redArray.push(imageBufferData[i]);
+        greenArray.push(imageBufferData[i + 1]);
+        blueArray.push(imageBufferData[i + 2]);
+        // skip data[i + 3] to filter out the alpha channel
+    }
 
-        // 1. Get buffer data from image and create R, G, and B arrays.
-        var imageBufferData = imageData.data;
-        const [redArray, greenArray, blueArray] = new Array(new Array(), new Array(), new Array());
+    // 3. Concatenate RGB to transpose [224, 224, 3] -> [3, 224, 224] to a number array
+    const transposedData = redArray.concat(greenArray).concat(blueArray);
 
-        // 2. Loop through the image buffer and extract the R, G, and B channels
-        for (let i = 0; i < imageBufferData.length; i += 4) {
-            redArray.push(imageBufferData[i]);
-            greenArray.push(imageBufferData[i + 1]);
-            blueArray.push(imageBufferData[i + 2]);
-            // skip data[i + 3] to filter out the alpha channel
-        }
+    let i, l = transposedData.length;
+    // create the Float32Array size 3 * 224 * 224 for these dimensions output
+    const float32Data = new Float32Array(3 * image.height * image.width);
+    for (i = 0; i < l; i++) {
+        float32Data[i] = transposedData[i] / 255.0; // convert to float
+    }
+    // 5. create the tensor object from onnxruntime-web.
+    const input_tensor = new ort.Tensor("float32", float32Data, [1, 3, image.height, image.width]);
+    const feeds = {};
+    feeds['data'] = input_tensor;
 
-        // 3. Concatenate RGB to transpose [224, 224, 3] -> [3, 224, 224] to a number array
-        const transposedData = redArray.concat(greenArray).concat(blueArray);
+    try {
+        // feed inputs and run
+        const results = await session.run(feeds);
 
-        let i, l = transposedData.length;
-        // create the Float32Array size 3 * 224 * 224 for these dimensions output
-        const float32Data = new Float32Array(3 * image.height * image.width);
-        for (i = 0; i < l; i++) {
-            float32Data[i] = transposedData[i] / 255.0; // convert to float
-        }
-        // 5. create the tensor object from onnxruntime-web.
-        const input_tensor = new ort.Tensor("float32", float32Data, [1, 3, image.height, image.width]);
-        const feeds = {};
-        feeds['data'] = input_tensor;
-
-        try {
-            // feed inputs and run
-            const results = await session.run(feeds);
-
-            // read from results
-            const dataC = results.c.data;
-            document.write(`data of result tensor 'c': ${dataC}`);
-        } catch (e) {
-            document.getElementById('output_text').innerHTML += `<br>failed to perform inference: ${e}.`;
-        }
+        // read from results
+        const dataC = results.c.data;
+        document.write(`data of result tensor 'c': ${dataC}`);
+    } catch (e) {
+        document.getElementById('output_text').innerHTML += `<br>failed to perform inference: ${e}.`;
     }
 }
 
