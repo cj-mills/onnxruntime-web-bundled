@@ -6,16 +6,10 @@ const ort = require('onnxruntime-web');
 var session;
 
 async function init_session(model_path, exec_provider) {
-    var return_msg;
-    try {
-        // create a new session and load the specified model.
-        session = await ort.InferenceSession.create(model_path,
-            { executionProviders: [exec_provider], graphOptimizationLevel: 'all' });
-        return_msg = 'Created inference session.';
-    } catch (e) {
-        return_msg = `failed to create inference session: ${e}.`;
-    }
-    return return_msg;
+    // create a new session and load the specified model.
+    const session_const = await ort.InferenceSession.create(model_path,
+        { executionProviders: [exec_provider], graphOptimizationLevel: 'all' });
+    return session_const;
 }
 
 
@@ -30,9 +24,9 @@ async function main() {
 
     var model_path = 'squeezenet1_1.onnx';
     var exec_provider = 'wasm';
-    var return_msg = init_session(model_path, exec_provider);
+    session = init_session(model_path, exec_provider);
 
-    document.getElementById('output_text').innerHTML += `<br>${(await return_msg).toString()}`;
+    // document.getElementById('output_text').innerHTML += `<br>${(await return_msg).toString()}`;
 
     console.log(typeof (session));
 
