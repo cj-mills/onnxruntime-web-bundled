@@ -49,8 +49,8 @@ async function main() {
     document.body.appendChild(div);
 
     var model_dir = './models';
-    var model_path = `${model_dir}/squeezenet1_1.onnx`;
-    // var model_path = `${model_dir}/resnet50v2.onnx`;
+    // var model_path = `${model_dir}/squeezenet1_1.onnx`;
+    var model_path = `${model_dir}/resnet50v2.onnx`;
     // var model_path = `${model_dir}/mobilenetv2-7.onnx`;
     var exec_provider = 'wasm';
     var return_msg = await init_session(model_path, exec_provider);
@@ -68,25 +68,34 @@ async function main() {
 
     // 1. Get buffer data from image and create R, G, and B arrays.
     var imageBufferData = imageData.data;
-    const [redArray, greenArray, blueArray] = new Array(new Array(), new Array(), new Array());
+    // const [redArray, greenArray, blueArray] = new Array(new Array(), new Array(), new Array());
 
     // 2. Loop through the image buffer and extract the R, G, and B channels
-    for (let i = 0; i < imageBufferData.length; i += 4) {
-        redArray.push(imageBufferData[i]);
-        greenArray.push(imageBufferData[i + 1]);
-        blueArray.push(imageBufferData[i + 2]);
-        // skip data[i + 3] to filter out the alpha channel
+    // for (let i = 0; i < imageBufferData.length; i += 4) {
+    //     redArray.push(imageBufferData[i]);
+    //     greenArray.push(imageBufferData[i + 1]);
+    //     blueArray.push(imageBufferData[i + 2]);
+    //     // skip data[i + 3] to filter out the alpha channel
+    // }
+
+    var n_pixels = image.width * image.height;
+    const float32Data = new Float32Array(3 * image.height * image.width);
+
+    for (p = 0; p < n_pixels; p++) {
+        float32Data[0 * n_pixels + p] = transposedData[p * n_channels + 0] / 255.0;
+        float32Data[1 * n_pixels + p] = transposedData[p * n_channels + 1] / 255.0;
+        float32Data[2 * n_pixels + p] = transposedData[p * n_channels + 2] / 255.0;
     }
 
     // 3. Concatenate RGB to transpose [224, 224, 3] -> [3, 224, 224] to a number array
-    const transposedData = redArray.concat(greenArray).concat(blueArray);
+    // const transposedData = redArray.concat(greenArray).concat(blueArray);
 
-    let i, l = transposedData.length;
+    // let i, l = transposedData.length;
     // create the Float32Array size 3 * 224 * 224 for these dimensions output
-    const float32Data = new Float32Array(3 * image.height * image.width);
-    for (i = 0; i < l; i++) {
-        float32Data[i] = transposedData[i] / 255.0; // convert to float
-    }
+    // const float32Data = new Float32Array(3 * image.height * image.width);
+    // for (i = 0; i < l; i++) {
+    //     float32Data[i] = transposedData[i] / 255.0; // convert to float
+    // }
     // 5. create the tensor object from onnxruntime-web.
     const input_tensor = new ort.Tensor("float32", float32Data, [1, 3, image.height, image.width]);
     const feeds = {};
