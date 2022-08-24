@@ -70,16 +70,13 @@ async function main() {
     const feeds = {};
     feeds['data'] = input_tensor;
 
-    try {
-        // feed inputs and run
-        const results = await session.run(feeds);
 
-        // read from results
-        const dataC = results.data;
-        document.write(`data of result tensor 'c': ${dataC}`);
-    } catch (e) {
-        document.getElementById('output_text').innerHTML += `<br>failed to perform inference: ${e}.`;
-    }
+    // feed inputs and run
+    const outputData = await session.run(feeds);
+
+    // read from results
+    const output = outputData[session.outputNames[0]];
+    document.getElementById('output_text').innerHTML += `data of result tensor: ${output}`;
 }
 
 main();
