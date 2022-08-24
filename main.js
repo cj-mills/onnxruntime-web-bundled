@@ -5,6 +5,11 @@
 const ort = require('onnxruntime-web');
 var session = ort.InferenceSession;
 
+// The mean of the ImageNet dataset used to train the model
+const mean = [0.485, 0.456, 0.406];
+// The standard deviation of the ImageNet dataset used to train the model
+const std_dev = [0.229, 0.224, 0.225];
+
 async function init_session(model_path, exec_provider) {
     var return_msg;
     try {
@@ -12,7 +17,6 @@ async function init_session(model_path, exec_provider) {
         session = await ort.InferenceSession.create(model_path,
             { executionProviders: [exec_provider], graphOptimizationLevel: 'all' });
         return_msg = 'Created inference session.';
-        // alert(session.inputNames[0]);
     } catch (e) {
         return_msg = `failed to create inference session: ${e}.`;
     }
@@ -22,10 +26,6 @@ async function init_session(model_path, exec_provider) {
 function argMax(array) {
     return array.map((x, i) => [x, i]).reduce((r, a) => (a[0] > r[0] ? a : r))[1];
 }
-
-// function argMax(array) {
-//     return [].map.call(array, (x, i) => [x, i]).reduce((r, a) => (a[0] > r[0] ? a : r))[1];
-// }
 
 //The softmax transforms values to be between 0 and 1
 function softmax(resultArray) {
@@ -49,16 +49,12 @@ async function main() {
     document.body.appendChild(div);
 
     var model_dir = './models';
-    // var model_path = `${model_dir}/squeezenet1_1.onnx`;
-    var model_path = `${model_dir}/resnet50v2.onnx`;
-    // var model_path = `${model_dir}/mobilenetv2-7.onnx`;
+    var model_path = `${model_dir}/asl-and-some-words-resnet34.onnx`;
     var exec_provider = 'wasm';
     var return_msg = await init_session(model_path, exec_provider);
     console.log(`Input Name: ${session.inputNames[0]}`);
 
     document.getElementById('output_text').innerHTML += `<br>${(await return_msg).toString()}`;
-
-    // console.log(typeof (session));
 
     var canvas = document.createElement('canvas');
     var context = canvas.getContext('2d');
@@ -66,37 +62,19 @@ async function main() {
     canvas.height = image.height;
     var imageData = context.getImageData(0, 0, image.width, image.height);
 
-    // 1. Get buffer data from image and create R, G, and B arrays.
+    // 1. Get buffer data from image.
     var imageBufferData = imageData.data;
-    // const [redArray, greenArray, blueArray] = new Array(new Array(), new Array(), new Array());
-
-    // 2. Loop through the image buffer and extract the R, G, and B channels
-    // for (let i = 0; i < imageBufferData.length; i += 4) {
-    //     redArray.push(imageBufferData[i]);
-    //     greenArray.push(imageBufferData[i + 1]);
-    //     blueArray.push(imageBufferData[i + 2]);
-    //     // skip data[i + 3] to filter out the alpha channel
-    // }
 
     var n_pixels = image.width * image.height;
     var n_channels = 3;
     const float32Data = new Float32Array(3 * image.height * image.width);
 
     for (p = 0; p < n_pixels; p++) {
-        float32Data[0 * n_pixels + p] = imageBufferData[p * n_channels + 0] / 255.0;
-        float32Data[1 * n_pixels + p] = imageBufferData[p * n_channels + 1] / 255.0;
-        float32Data[2 * n_pixels + p] = imageBufferData[p * n_channels + 2] / 255.0;
+        float32Data[0 * n_pixels + p] = ((imageBufferData[p * n_channels + 0] / 255.0) - mean[0]) / std_dev[0];
+        float32Data[1 * n_pixels + p] = ((imageBufferData[p * n_channels + 1] / 255.0) - mean[1]) / std_dev[1];
+        float32Data[2 * n_pixels + p] = ((imageBufferData[p * n_channels + 2] / 255.0) - mean[2]) / std_dev[2];
     }
 
-    // 3. Concatenate RGB to transpose [224, 224, 3] -> [3, 224, 224] to a number array
-    // const transposedData = redArray.concat(greenArray).concat(blueArray);
-
-    // let i, l = transposedData.length;
-    // create the Float32Array size 3 * 224 * 224 for these dimensions output
-    // const float32Data = new Float32Array(3 * image.height * image.width);
-    // for (i = 0; i < l; i++) {
-    //     float32Data[i] = transposedData[i] / 255.0; // convert to float
-    // }
     // 5. create the tensor object from onnxruntime-web.
     const input_tensor = new ort.Tensor("float32", float32Data, [1, 3, image.height, image.width]);
     const feeds = {};
