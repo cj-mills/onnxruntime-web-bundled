@@ -66,7 +66,7 @@ async function main() {
         }
         // 5. create the tensor object from onnxruntime-web.
         const input_tensor = new ort.Tensor("float32", float32Data, [1, 3, image.width, image.height]);
-        const feeds = Record();
+        const feeds = ort.Record();
         feeds[session.inputNames[0]] = input_tensor;
 
         try {
