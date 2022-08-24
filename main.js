@@ -19,6 +19,9 @@ async function init_session(model_path, exec_provider) {
     return return_msg;
 }
 
+function argMax(array) {
+    return [].map.call(array, (x, i) => [x, i]).reduce((r, a) => (a[0] > r[0] ? a : r))[1];
+}
 
 // use an async context to call onnxruntime functions.
 async function main() {
@@ -77,7 +80,8 @@ async function main() {
     // read from results
     const output = outputData[session.outputNames[0]];
     var results = Array.prototype.slice.call(output.data);
-    document.getElementById('output_text').innerHTML += `data of result tensor: ${results}`;
+    var index = argMax(results);
+    document.getElementById('output_text').innerHTML += `Predicted class index: ${index}`;
 }
 
 main();
