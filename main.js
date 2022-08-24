@@ -42,10 +42,10 @@ function softmax(resultArray) {
 // use an async context to call onnxruntime functions.
 async function main() {
 
-    // var image = document.getElementById('image');
+    var image = document.getElementById('image');
     var div = document.createElement("DIV");
     div.id = 'output_text';
-
+    div.innerHTML = `Image Source: ${image.src}`;
     document.body.appendChild(div);
 
     var model_dir = './models';
@@ -56,19 +56,12 @@ async function main() {
 
     document.getElementById('output_text').innerHTML += `<br>${(await return_msg).toString()}`;
 
-    image = await new Image();
-    image.src = 'https://cj-mills.github.io/onnxruntime-web-bundled/images/Play_1291.jpg';
-    div.innerHTML = `Image Source: ${image.src}`;
-
     var canvas = document.createElement("CANVAS");
     var context = canvas.getContext('2d');
     document.body.appendChild(canvas);
-    image.onload = () => {
-        // canvas.width = image.width;
-        // canvas.height = image.height;
-        context.drawImage(image, 0, 0);
-    }
-
+    canvas.width = image.width;
+    canvas.height = image.height;
+    context.drawImage(image, 0, 0);
     var imageData = context.getImageData(0, 0, image.width, image.height);
 
     // 1. Get buffer data from image.
@@ -78,16 +71,44 @@ async function main() {
 
     var n_pixels = image.width * image.height;
     var n_channels = 3;
-    const float32Data = new Float32Array(3 * image.height * image.width);
+    // const float32Data = new Float32Array(3 * image.height * image.width);
 
-    for (p = 0; p < n_pixels; p++) {
-        float32Data[0 * n_pixels + p] = ((imageBufferData[p * n_channels + 0] / 255.0) - mean[0]) / std_dev[0];
-        float32Data[1 * n_pixels + p] = ((imageBufferData[p * n_channels + 1] / 255.0) - mean[1]) / std_dev[1];
-        float32Data[2 * n_pixels + p] = ((imageBufferData[p * n_channels + 2] / 255.0) - mean[2]) / std_dev[2];
+    // for (p = 0; p < n_pixels; p++) {
+    //     float32Data[0 * n_pixels + p] = ((imageBufferData[p * n_channels + 0] / 255.0) - mean[0]) / std_dev[0];
+    //     float32Data[1 * n_pixels + p] = ((imageBufferData[p * n_channels + 1] / 255.0) - mean[1]) / std_dev[1];
+    //     float32Data[2 * n_pixels + p] = ((imageBufferData[p * n_channels + 2] / 255.0) - mean[2]) / std_dev[2];
+    // }
+
+
+
+    const [redArray, greenArray, blueArray] = new Array(new Array(), new Array(), new Array());
+
+    // 2. Loop through the image buffer and extract the R, G, and B channels
+    for (let i = 0; i < imageBufferData.length; i += 4) {
+        redArray.push(imageBufferData[i]);
+        greenArray.push(imageBufferData[i + 1]);
+        blueArray.push(imageBufferData[i + 2]);
+        // skip data[i + 3] to filter out the alpha channel
     }
 
-    console.log(`Input Data: ${float32Data}`);
+    // 3. Concatenate RGB to transpose [224, 224, 3] -> [3, 224, 224] to a number array
+    const transposedData = redArray.concat(greenArray).concat(blueArray);
 
+    // 4. convert to float32
+    let i, l = transposedData.length; // length, we need this for the loop
+    // create the Float32Array size 3 * 224 * 224 for these dimensions output
+    const float32Data = new Float32Array(dims[1] * dims[2] * dims[3]);
+    // for (i = 0; i < l; i++) {
+    //     float32Data[i] = transposedData[i] / 255.0; // convert to float
+    // }
+    for (p = 0; p < n_pixels; p++) {
+        float32Data[p + 0] = ((transposedData[p + 0] / 255.0) - mean[0]) / std_dev[0];
+        float32Data[p + 1] = ((transposedData[p + 1] / 255.0) - mean[1]) / std_dev[1];
+        float32Data[p + 2] = ((transposedData[p + 2] / 255.0) - mean[2]) / std_dev[2];
+    }
+
+
+    console.log(`Input Data: ${float32Data}`);
     // 5. create the tensor object from onnxruntime-web.
     const input_tensor = new ort.Tensor("float32", float32Data, [1, 3, image.height, image.width]);
     const feeds = {};
