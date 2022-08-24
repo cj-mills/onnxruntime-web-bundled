@@ -93,7 +93,7 @@ async function main() {
     // read from results
     const output = outputData[session.outputNames[0]];
     var results = softmax(Array.prototype.slice.call(output.data));
-
+    console.log(`Predictions: ${results}`);
     var index = argMax(results);
     document.getElementById('output_text').innerHTML += `<br>Predicted class index: ${index}`;
 }
