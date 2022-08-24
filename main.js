@@ -72,10 +72,10 @@ async function main() {
     var n_pixels = image.width * image.height;
     var n_channels = 3;
     const float32Data = new Float32Array(3 * image.height * image.width);
-    for (let p = 0; p < n_pixels; p++) {
-        float32Data[0 + p] = ((imageBufferData[p + 0] / 255.0) - mean[0]) / std_dev[0];
-        float32Data[1 + p] = ((imageBufferData[p + 1] / 255.0) - mean[1]) / std_dev[1];
-        float32Data[2 + p] = ((imageBufferData[p + 2] / 255.0) - mean[2]) / std_dev[2];
+    for (let p = 0; p < imageBufferData.length; p += 4) {
+        float32Data[0 * n_pixels + p] = ((imageBufferData[p * n_channels + 0] / 255.0) - mean[0]) / std_dev[0];
+        float32Data[1 * n_pixels + p] = ((imageBufferData[p * n_channels + 1] / 255.0) - mean[1]) / std_dev[1];
+        float32Data[2 * n_pixels + p] = ((imageBufferData[p * n_channels + 2] / 255.0) - mean[2]) / std_dev[2];
     }
     console.log(`${float32Data}`);
 
