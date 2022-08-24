@@ -32,7 +32,10 @@ async function main() {
     div.innerHTML = `Image Source: ${image.src}`;
     document.body.appendChild(div);
 
-    var model_path = 'squeezenet1_1.onnx';
+    var model_dir = './models';
+    var model_path = `${model_dir}/squeezenet1_1.onnx`;
+    // var model_path = `${model_dir}/squeezenet1_1.onnx`;
+    // var model_path = `${model_dir}/squeezenet1_1.onnx`;
     var exec_provider = 'wasm';
     var return_msg = await init_session(model_path, exec_provider);
     console.log(`Input Name: ${session.inputNames[0]}`);
