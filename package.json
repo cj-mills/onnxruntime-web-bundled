@@ -4,7 +4,6 @@
     "version": "1.0.0",
     "description": "This example is a demonstration of basic usage of ONNX Runtime Web using a bundler.",
     "dependencies": {
-        "browserify": "^17.0.0",
         "jimp": "^0.16.1",
         "onnxruntime-web": "^1.8.0"
     },
