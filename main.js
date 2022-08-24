@@ -105,9 +105,9 @@ async function main() {
 
     console.time('second');
     const [redArray, greenArray, blueArray] = new Array(
-        new Float32Array(),
-        new Float32Array(),
-        new Float32Array());
+        new Array(),
+        new Array(),
+        new Array());
 
     // 2. Loop through the image buffer and extract the R, G, and B channels
     for (let i = 0; i < imageBufferData.length; i += 4) {
