@@ -64,6 +64,8 @@ async function main() {
 
     // 1. Get buffer data from image.
     var imageBufferData = imageData.data;
+    console.log(`Image Data: ${imageBufferData}`);
+
 
     var n_pixels = image.width * image.height;
     var n_channels = 3;
@@ -80,6 +82,8 @@ async function main() {
         float32Data[1 * n_pixels + p] = ((imageBufferData[p * n_channels + 1]) - mean[1]) / std_dev[1];
         float32Data[2 * n_pixels + p] = ((imageBufferData[p * n_channels + 2]) - mean[2]) / std_dev[2];
     }
+
+    console.log(`Input Data: ${float32Data}`);
 
     // 5. create the tensor object from onnxruntime-web.
     const input_tensor = new ort.Tensor("float32", float32Data, [1, 3, image.height, image.width]);
