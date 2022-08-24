@@ -65,7 +65,7 @@ async function main() {
             float32Data[i] = transposedData[i] / 255.0; // convert to float
         }
         // 5. create the tensor object from onnxruntime-web.
-        const input_tensor = new ort.Tensor("float32", float32Data, [1, 3, image.width, image.height]);
+        const input_tensor = new ort.Tensor("float32", float32Data, [1, 3, image.height, image.width]);
         const feeds = ort.Record();
         feeds[session.inputNames[0]] = input_tensor;
 
