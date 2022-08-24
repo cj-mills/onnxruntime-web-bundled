@@ -49,7 +49,7 @@ async function main() {
     document.body.appendChild(div);
 
     var model_dir = './models';
-    var model_path = `${model_dir}/asl-and-some-words-resnet34.onnx`;
+    var model_path = `${model_dir}/asl-and-some-words-mobilenetv2_050.onnx`;
     var exec_provider = 'wasm';
     var return_msg = await init_session(model_path, exec_provider);
     console.log(`Input Name: ${session.inputNames[0]}`);
@@ -66,7 +66,7 @@ async function main() {
 
     // 1. Get buffer data from image.
     var imageBufferData = imageData.data;
-    console.log(`RGBA Data: ${imageBufferData}`);
+    // console.log(`RGBA Data: ${imageBufferData}`);
 
     console.time('Preprocessing');
     const [redArray, greenArray, blueArray] = new Array(
@@ -81,18 +81,22 @@ async function main() {
         blueArray.push(((imageBufferData[i + 2] / 255.0) - mean[2]) / std_dev[2]);
         // skip data[i + 3] to filter out the alpha channel
     }
-    console.timeEnd('Preprocessing');
 
-    console.time('from');
     // 3. Concatenate RGB to transpose [224, 224, 3] -> [3, 224, 224] to a number array
     const float32Data = Float32Array.from(redArray.concat(greenArray).concat(blueArray));
-    console.timeEnd('from');
+    console.timeEnd('Preprocessing');
 
-    console.log(`Input Data: ${float32Data}`);
+    // console.log(`Input Data: ${float32Data}`);
     // 5. create the tensor object from onnxruntime-web.
     const input_tensor = new ort.Tensor("float32", float32Data, [1, 3, image.height, image.width]);
     const feeds = {};
     feeds[session.inputNames[0]] = input_tensor;
+
+    // for (let i = 0; i < 500; i++) {
+    //     console.time('Inference');
+    //     await session.run(feeds);
+    //     console.timeEnd('Inference');
+    // }
 
     // feed inputs and run
     console.time('Inference');
@@ -102,7 +106,7 @@ async function main() {
     // read from results
     const output = outputData[session.outputNames[0]];
     var results = softmax(Array.prototype.slice.call(output.data));
-    console.log(`Predictions: ${results}`);
+    // console.log(`Predictions: ${results}`);
     var index = argMax(results);
     document.getElementById('output_text').innerHTML += `<br>Predicted class index: ${index}`;
 }
