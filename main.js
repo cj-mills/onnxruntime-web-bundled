@@ -73,7 +73,7 @@ async function main() {
 
     var n_pixels = image.width * image.height;
     var n_channels = 3;
-    const float32Data = new Float32Array(3 * image.height * image.width);
+    // const float32Data = new Float32Array(3 * image.height * image.width);
 
     // const delta = 4;
     // const length = imageBufferData.length;
@@ -104,21 +104,22 @@ async function main() {
     // console.log(`${float32Data}`);
 
     console.time('second');
-    const [redArray, greenArray, blueArray] = new Array(new Array(), new Array(), new Array());
+    const [redArray, greenArray, blueArray] = new Array(
+        new Float32Array(),
+        new Float32Array(),
+        new Float32Array());
 
     // 2. Loop through the image buffer and extract the R, G, and B channels
     for (let i = 0; i < imageBufferData.length; i += 4) {
-        redArray.push(imageBufferData[i]);
-        greenArray.push(imageBufferData[i + 1]);
-        blueArray.push(imageBufferData[i + 2]);
+        redArray.push(((imageBufferData[i] / 255.0) - mean[0]) / std_dev[0]);
+        greenArray.push(((imageBufferData[i + 1] / 255.0) - mean[1]) / std_dev[1]);
+        blueArray.push(((imageBufferData[i + 2] / 255.0) - mean[2]) / std_dev[2]);
         // skip data[i + 3] to filter out the alpha channel
-        float32Data[0 + i] = ((redArray[i] / 255.0) - mean[0]) / std_dev[0];
-        float32Data[1 + i] = ((greenArray[i] / 255.0) - mean[1]) / std_dev[1];
-        float32Data[2 + i] = ((blueArray[i] / 255.0) - mean[2]) / std_dev[2];
     }
 
     // 3. Concatenate RGB to transpose [224, 224, 3] -> [3, 224, 224] to a number array
-    const transposedData = redArray.concat(greenArray).concat(blueArray);
+    // const transposedData = redArray.concat(greenArray).concat(blueArray);
+    const float32Data = Float32Array.from(redArray.concat(greenArray).concat(blueArray));
 
     // 4. convert to float32
     // for (let p = 0; p < n_pixels; p++) {
