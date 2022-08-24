@@ -42,10 +42,10 @@ function softmax(resultArray) {
 // use an async context to call onnxruntime functions.
 async function main() {
 
-    var image = document.getElementById('image');
+    // var image = document.getElementById('image');
     var div = document.createElement("DIV");
     div.id = 'output_text';
-    div.innerHTML = `Image Source: ${image.src}`;
+
     document.body.appendChild(div);
 
     var model_dir = './models';
@@ -55,6 +55,10 @@ async function main() {
     console.log(`Input Name: ${session.inputNames[0]}`);
 
     document.getElementById('output_text').innerHTML += `<br>${(await return_msg).toString()}`;
+
+    image = new Image();
+    image.src = 'https://cj-mills.github.io/onnxruntime-web-bundled/images/Play_1291.jpg';
+    div.innerHTML = `Image Source: ${image.src}`;
 
     var canvas = document.createElement("CANVAS");
     var context = canvas.getContext('2d');
