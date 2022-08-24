@@ -68,39 +68,42 @@ async function main() {
     var imageBufferData = imageData.data;
     console.log(`RGBA Data: ${imageBufferData}`);
 
-    const delta = 4;
-    const length = imageBufferData.length;
-    const newLength = length - length / delta;
 
-    const rgbArr = new Uint8Array(newLength);
 
-    let j = 0;
-
-    // for (i = 0; i < length; i = i + delta) {
-    //     rgbArr[j] = imageBufferData[i]; // R
-    //     rgbArr[j + 1] = imageBufferData[i + 1]; // G
-    //     rgbArr[j + 2] = imageBufferData[i + 2]; // B
-    //     j = j + 3;
-    // }
 
     var n_pixels = image.width * image.height;
     var n_channels = 3;
     const float32Data = new Float32Array(3 * image.height * image.width);
 
+    const delta = 4;
+    const length = imageBufferData.length;
+    const newLength = length - length / delta;
+    console.time('first');
+    const rgbArr = new Uint8Array(newLength);
+    let j = 0;
     for (i = 0; i < length; i = i + delta) {
-        float32Data[0 + j] = ((imageBufferData[i * n_channels + 0] / 255.0) - mean[0]) / std_dev[0];
-        float32Data[1 + j] = ((imageBufferData[i * n_channels + 1] / 255.0) - mean[1]) / std_dev[1];
-        float32Data[2 + j] = ((imageBufferData[i * n_channels + 2] / 255.0) - mean[2]) / std_dev[2];
+        rgbArr[j] = imageBufferData[i]; // R
+        rgbArr[j + 1] = imageBufferData[i + 1]; // G
+        rgbArr[j + 2] = imageBufferData[i + 2]; // B
         j = j + 3;
     }
 
-    // for (let p = 0; p < n_pixels; p++) {
-    //     float32Data[0 * n_pixels + p] = ((rgbArr[p * n_channels + 0] / 255.0) - mean[0]) / std_dev[0];
-    //     float32Data[1 * n_pixels + p] = ((rgbArr[p * n_channels + 1] / 255.0) - mean[1]) / std_dev[1];
-    //     float32Data[2 * n_pixels + p] = ((rgbArr[p * n_channels + 2] / 255.0) - mean[2]) / std_dev[2];
+    // for (i = 0; i < length; i = i + delta) {
+    //     float32Data[0 + j] = ((imageBufferData[i * n_channels + 0] / 255.0) - mean[0]) / std_dev[0];
+    //     float32Data[1 + j] = ((imageBufferData[i * n_channels + 1] / 255.0) - mean[1]) / std_dev[1];
+    //     float32Data[2 + j] = ((imageBufferData[i * n_channels + 2] / 255.0) - mean[2]) / std_dev[2];
+    //     j = j + 3;
     // }
+
+    for (let p = 0; p < n_pixels; p++) {
+        float32Data[0 * n_pixels + p] = ((rgbArr[p * n_channels + 0] / 255.0) - mean[0]) / std_dev[0];
+        float32Data[1 * n_pixels + p] = ((rgbArr[p * n_channels + 1] / 255.0) - mean[1]) / std_dev[1];
+        float32Data[2 * n_pixels + p] = ((rgbArr[p * n_channels + 2] / 255.0) - mean[2]) / std_dev[2];
+    }
+    console.timeEnd('first');
     console.log(`${float32Data}`);
 
+    console.time('second');
     const [redArray, greenArray, blueArray] = new Array(new Array(), new Array(), new Array());
 
     // 2. Loop through the image buffer and extract the R, G, and B channels
@@ -120,7 +123,7 @@ async function main() {
         float32Data[p + 1] = ((transposedData[p + 1] / 255.0) - mean[1]) / std_dev[1];
         float32Data[p + 2] = ((transposedData[p + 2] / 255.0) - mean[2]) / std_dev[2];
     }
-
+    console.timeEnd('second');
 
     console.log(`Input Data: ${float32Data}`);
     // 5. create the tensor object from onnxruntime-web.
