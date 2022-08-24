@@ -72,14 +72,12 @@ async function main() {
     var n_pixels = image.width * image.height;
     var n_channels = 3;
     // const float32Data = new Float32Array(3 * image.height * image.width);
-
+    console.log(((imageBufferData[0 * n_channels + 0] / 255.0) - mean[0]) / std_dev[0]);
     // for (p = 0; p < n_pixels; p++) {
     //     float32Data[0 * n_pixels + p] = ((imageBufferData[p * n_channels + 0] / 255.0) - mean[0]) / std_dev[0];
     //     float32Data[1 * n_pixels + p] = ((imageBufferData[p * n_channels + 1] / 255.0) - mean[1]) / std_dev[1];
     //     float32Data[2 * n_pixels + p] = ((imageBufferData[p * n_channels + 2] / 255.0) - mean[2]) / std_dev[2];
     // }
-
-
 
     const [redArray, greenArray, blueArray] = new Array(new Array(), new Array(), new Array());
 
@@ -98,9 +96,7 @@ async function main() {
     let i, l = transposedData.length; // length, we need this for the loop
     // create the Float32Array size 3 * 224 * 224 for these dimensions output
     const float32Data = new Float32Array(3 * image.height * image.width);
-    // for (i = 0; i < l; i++) {
-    //     float32Data[i] = transposedData[i] / 255.0; // convert to float
-    // }
+
     for (p = 0; p < n_pixels; p++) {
         float32Data[p + 0] = ((transposedData[p + 0] / 255.0) - mean[0]) / std_dev[0];
         float32Data[p + 1] = ((transposedData[p + 1] / 255.0) - mean[1]) / std_dev[1];
