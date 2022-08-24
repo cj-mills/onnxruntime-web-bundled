@@ -58,6 +58,7 @@ async function main() {
 
     var canvas = document.createElement('canvas');
     var context = canvas.getContext('2d');
+    context.drawImage(image, 0, 0);
     canvas.width = image.width;
     canvas.height = image.height;
     var imageData = context.getImageData(0, 0, image.width, image.height);
@@ -71,16 +72,10 @@ async function main() {
     var n_channels = 3;
     const float32Data = new Float32Array(3 * image.height * image.width);
 
-    // for (p = 0; p < n_pixels; p++) {
-    //     float32Data[0 * n_pixels + p] = ((imageBufferData[p * n_channels + 0] / 255.0) - mean[0]) / std_dev[0];
-    //     float32Data[1 * n_pixels + p] = ((imageBufferData[p * n_channels + 1] / 255.0) - mean[1]) / std_dev[1];
-    //     float32Data[2 * n_pixels + p] = ((imageBufferData[p * n_channels + 2] / 255.0) - mean[2]) / std_dev[2];
-    // }
-
     for (p = 0; p < n_pixels; p++) {
-        float32Data[0 * n_pixels + p] = ((imageBufferData[p * n_channels + 0]) - mean[0]) / std_dev[0];
-        float32Data[1 * n_pixels + p] = ((imageBufferData[p * n_channels + 1]) - mean[1]) / std_dev[1];
-        float32Data[2 * n_pixels + p] = ((imageBufferData[p * n_channels + 2]) - mean[2]) / std_dev[2];
+        float32Data[0 * n_pixels + p] = ((imageBufferData[p * n_channels + 0] / 255.0) - mean[0]) / std_dev[0];
+        float32Data[1 * n_pixels + p] = ((imageBufferData[p * n_channels + 1] / 255.0) - mean[1]) / std_dev[1];
+        float32Data[2 * n_pixels + p] = ((imageBufferData[p * n_channels + 2] / 255.0) - mean[2]) / std_dev[2];
     }
 
     console.log(`Input Data: ${float32Data}`);
