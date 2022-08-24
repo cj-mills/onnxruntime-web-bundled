@@ -12,7 +12,7 @@ async function init_session(model_path, exec_provider) {
         session = await ort.InferenceSession.create(model_path,
             { executionProviders: [exec_provider], graphOptimizationLevel: 'all' });
         return_msg = 'Created inference session.';
-        alert(session.inputNames[0]);
+        // alert(session.inputNames[0]);
     } catch (e) {
         return_msg = `failed to create inference session: ${e}.`;
     }
@@ -32,12 +32,13 @@ async function main() {
     var model_path = 'squeezenet1_1.onnx';
     var exec_provider = 'wasm';
     var return_msg = init_session(model_path, exec_provider);
+    alert(`Input Name: ${session.inputNames[0]}`);
 
     document.getElementById('output_text').innerHTML += `<br>${(await return_msg).toString()}`;
 
     console.log(typeof (session));
 
-    if (globalThis.session = ! null) {
+    if (session = ! null) {
 
         var canvas = document.createElement('canvas');
         var context = canvas.getContext('2d');
