@@ -98,9 +98,11 @@ async function main() {
     // }
 
     // feed inputs and run
-    console.time('Inference');
+    // console.time('Inference');
+    const start = new Date();
     const outputData = await session.run(feeds);
-    console.timeEnd('Inference');
+    const end = new Date();
+    // console.timeEnd('Inference');
 
     // read from results
     const output = outputData[session.outputNames[0]];
@@ -108,6 +110,7 @@ async function main() {
     // console.log(`Predictions: ${results}`);
     var index = argMax(results);
     document.getElementById('output_text').innerHTML += `<br>Predicted class index: ${index}`;
+    document.getElementById('output_text').innerHTML += `<br>Inference Time: ${(end.getTime() - start.getTime())}ms`;
 }
 
 main();
