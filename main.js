@@ -58,7 +58,6 @@ async function main() {
 
     var canvas = document.createElement("CANVAS");
     var context = canvas.getContext('2d');
-    document.body.appendChild(canvas);
     canvas.width = image.width;
     canvas.height = image.height;
     context.drawImage(image, 0, 0);
